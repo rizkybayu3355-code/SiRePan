@@ -134,18 +134,19 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (authToggleText) {
         authToggleText.addEventListener("click", (e) => {
-            if (e.target.tagName === "A") {
+            const targetA = e.target.closest("a");
+            if (targetA) {
                 e.preventDefault();
                 isRegisterMode = !isRegisterMode; 
                 
                 if (isRegisterMode) {
                     authTitle.innerText = "Daftar Akun Baru";
                     authSubmitBtn.innerText = "Daftar Sekarang";
-                    authToggleText.innerHTML = `Sudah punya akun? <a href="#">Masuk di sini</a>`;
+                    authToggleText.innerHTML = `Sudah punya akun? <a href="#" id="toggleAuthMode">Masuk di sini</a>`;
                 } else {
                     authTitle.innerText = "Masuk ke SIRePan";
                     authSubmitBtn.innerText = "Masuk";
-                    authToggleText.innerHTML = `Belum punya akun? <a href="#">Daftar di sini</a>`;
+                    authToggleText.innerHTML = `Belum punya akun? <a href="#" id="toggleAuthMode">Daftar di sini</a>`;
                 }
             }
         });
@@ -175,7 +176,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 isRegisterMode = false;
                 authTitle.innerText = "Masuk ke SIRePan";
                 authSubmitBtn.innerText = "Masuk";
-                authToggleText.innerHTML = `Belum punya akun? <a href="#">Daftar di sini</a>`;
+                authToggleText.innerHTML = `Belum punya akun? <a href="#" id="toggleAuthMode">Daftar di sini</a>`;
                 authForm.reset();
             } else {
                 if (!usersDB[email] || usersDB[email].password !== password) {
