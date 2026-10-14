@@ -92,7 +92,12 @@
         <!-- KONTEN UTAMA -->
         <main class="main-content">
             <header class="top-bar">
-                <h1 id="pageTitle">Pantau Sehat Warga</h1>
+                <div style="display: flex; align-items: center; gap: 12px;">
+                    <button id="sidebarToggleBtn" class="btn-sidebar-toggle" title="Buka/Tutup Menu">
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+                    <h1 id="pageTitle" style="font-size: 1.2rem; margin: 0;">Pantau Sehat Warga</h1>
+                </div>
                 <div class="search-box">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     <input type="text" id="globalSearch" placeholder="Cari laporan makanan atau gejala...">
@@ -304,68 +309,4 @@
                 <h3><i class="fa-solid fa-hospital-user"></i> Login Petugas Kesehatan / Faskes</h3>
                 <button id="closeFaskes" class="btn-close">&times;</button>
             </div>
-            <div class="faskes-info-box">
-                <p><i class="fa-solid fa-circle-info"></i> Mode ini khusus untuk verifikasi sampel klinis, validasi uji laboratorium, dan penanganan laporan KLB oleh Puskesmas/Dinkes.</p>
-            </div>
-            <form id="faskesLoginForm">
-                <div class="form-group">
-                    <label>Nama Fasilitas Kesehatan / Puskesmas</label>
-                    <input type="text" id="faskesName" placeholder="Contoh: Puskesmas Sukajadi" required>
-                </div>
-                <div class="form-group">
-                    <label>NIP / ID Verifikasi Petugas Medis</label>
-                    <input type="password" id="faskesCode" placeholder="Masukkan ID Verifikasi" required>
-                </div>
-                <button type="submit" class="btn-faskes-submit">
-                    <i class="fa-solid fa-user-check"></i> Masuk Mode Verifikasi Faskes
-                </button>
-            </form>
-        </div>
-    </div>
-
-    <!-- MODAL KONFIRMASI LOGOUT -->
-    <div id="logoutModal" class="modal hidden">
-        <div class="modal-content" style="max-width: 400px; text-align: center;">
-            <div style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;">
-                <i class="fa-solid fa-right-from-bracket"></i>
-            </div>
-            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Konfirmasi Keluar</h3>
-            <p style="color: var(--text-muted); margin-bottom: 25px;">Apakah Anda yakin ingin keluar dari sistem SIRePan?</p>
-            
-            <div style="display: flex; gap: 15px; justify-content: center;">
-                <button id="cancelLogoutBtn" class="btn-secondary" style="flex: 1; padding: 10px 15px;">Batal</button>
-                <button id="confirmLogoutBtn" style="flex: 1; background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer;">Ya, Keluar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PEMBERITAHUAN (CUSTOM ALERT) -->
-    <div id="customAlertModal" class="modal hidden" style="z-index: 100000;">
-        <div class="modal-content" style="max-width: 350px; text-align: center;">
-            <div id="customAlertIcon" style="font-size: 3rem; margin-bottom: 15px;"></div>
-            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Informasi</h3>
-            <p id="customAlertText" style="color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;"></p>
-            <button id="customAlertBtn" style="background: #0D8ABC; color: white; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer;">OK</button>
-        </div>
-    </div>
-
-    <!-- MODAL PERIZINAN LOKASI YANG LEBIH PROPER -->
-    <div id="locationPermissionModal" class="modal hidden" style="z-index: 999999; background: rgba(15, 23, 42, 0.85);">
-        <div class="modal-content" style="max-width: 420px; text-align: center; padding: 30px;">
-            <div style="font-size: 3.5rem; color: #0D8ABC; margin-bottom: 15px;">
-                <i class="fa-solid fa-location-crosshairs"></i>
-            </div>
-            <h3 style="color: var(--text-dark); margin-bottom: 10px; font-size: 1.2rem;">Aktifkan Pemantauan Wilayah</h3>
-            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px;">
-                SIRePan memerlukan akses lokasi perangkat Anda untuk mendeteksi laporan keracunan makanan secara akurat dalam <strong>radius 10 km</strong> di sekitar Anda. Privasi Anda aman dan hanya digunakan untuk peringatan dini.
-            </p>
-            <div style="display: flex; gap: 12px; justify-content: center;">
-                <button id="denyLocationBtn" class="btn-secondary" style="flex: 1; padding: 10px;">Nanti Saja</button>
-                <button id="grantLocationBtn" class="btn-primary" style="flex: 1; padding: 10px;">Izinkan Lokasi</button>
-            </div>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
-</body>
-</html>
+            <div class="faskes-info-

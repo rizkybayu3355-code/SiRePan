@@ -32,9 +32,10 @@ body {
     display: flex;
     min-height: 100vh;
     width: 100%;
+    position: relative;
 }
 
-/* --- SIDEBAR --- */
+/* --- SIDEBAR & TOMBOL TOGGLE --- */
 .sidebar {
     width: 260px;
     background-color: var(--sidebar-bg);
@@ -44,6 +45,29 @@ body {
     justify-content: flex-start;
     padding: 15px 15px;
     flex-shrink: 0;
+    transition: all 0.3s ease-in-out;
+}
+
+.sidebar.sidebar-closed {
+    margin-left: -260px;
+}
+
+.btn-sidebar-toggle {
+    background: #f1f5f9;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.btn-sidebar-toggle:hover {
+    background: #e2e8f0;
 }
 
 .brand {
@@ -739,37 +763,22 @@ body {
 
 /* --- RESPONSIVE MEDIA QUERIES UNTUK HP / LAYAR KECIL --- */
 @media (max-width: 768px) {
-    .app-container {
-        flex-direction: column;
-    }
-
     .sidebar {
-        width: 100%;
-        height: auto;
-        padding: 12px 15px;
+        position: absolute;
+        left: -260px;
+        top: 0;
+        bottom: 0;
+        z-index: 1100;
+        height: 100%;
     }
 
-    .nav-menu {
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 6px;
-        margin-bottom: 12px;
+    .sidebar.sidebar-open {
+        left: 0;
+        box-shadow: 5px 0 15px rgba(0,0,0,0.3);
     }
 
-    .nav-link {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        flex: 1;
-        justify-content: center;
-        min-width: 110px;
-    }
-
-    .user-profile-card {
-        display: none; /* Sembunyikan profil samping di HP sempit, atau sesuaikan jika perlu */
-    }
-
-    .main-content {
-        width: 100%;
+    .sidebar.sidebar-closed {
+        margin-left: 0;
     }
 
     .top-bar {

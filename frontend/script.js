@@ -1,5 +1,31 @@
 document.addEventListener("DOMContentLoaded", () => {
     // ==========================================
+    // --- TOGGLE SIDEBAR BUKA/TUTUP ---
+    // ==========================================
+    const sidebarToggleBtn = document.getElementById("sidebarToggleBtn");
+    const sidebar = document.querySelector(".sidebar");
+
+    if (sidebarToggleBtn && sidebar) {
+        sidebarToggleBtn.addEventListener("click", () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle("sidebar-open");
+            } else {
+                sidebar.classList.toggle("sidebar-closed");
+            }
+        });
+
+        // Tutup sidebar otomatis di HP ketika salah satu menu diklik
+        const navLinksList = document.querySelectorAll(".nav-link");
+        navLinksList.forEach(link => {
+            link.addEventListener("click", () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove("sidebar-open");
+                }
+            });
+        });
+    }
+
+    // ==========================================
     // --- FUNGSI CUSTOM ALERT ---
     // ==========================================
     function showCustomAlert(message, type = "info") {
