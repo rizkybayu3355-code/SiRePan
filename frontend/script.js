@@ -254,11 +254,11 @@ document.addEventListener("DOMContentLoaded", () => {
             appendLog(`[POST] Mengirim sampel '${payload.makanan}' (Jam: ${payload.jam_konsumsi}, Onset: ${payload.durasi_onset_jam}) ke API...`);
 
             try {
-                const response = await fetch("http://127.0.0.1:8000/api/analyze", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
+                const response = await fetch("https://sirepan-production.up.railway.app/api/analyze", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
 
                 if (!response.ok) throw new Error("Gagal terhubung ke backend FastAPI");
 
