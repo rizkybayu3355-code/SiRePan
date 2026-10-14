@@ -55,17 +55,15 @@
 
         <!-- KONTEN UTAMA -->
         <main class="main-content">
-            <header class="top-bar" style="display: flex; align-items: center; justify-content: space-between; gap: 15px; padding: 15px 20px;">
-    <!-- Kiri: Tombol Toggle Sidebar -->
-    <button id="sidebarToggleBtn" class="btn-sidebar-toggle" title="Menu" style="flex-shrink: 0;">
-        <i class="fa-solid fa-bars"></i>
-    </button>
-    
-    <!-- Tengah: Judul Halaman -->
-    <h1 id="pageTitle" style="font-size: 1.25rem; font-weight: 700; margin: 0; text-align: center; flex-grow: 1;">Pantau Sehat</h1>
-    
-    <!-- Kanan: Kotak Pencarian -->
-    <div class="search-box" style="flex-shrink: 0;">
+            <header class="top-bar">
+    <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 10px;">
+        <button id="sidebarToggleBtn" class="btn-sidebar-toggle" title="Menu">
+            <i class="fa-solid fa-bars"></i>
+        </button>
+        <h1 id="pageTitle" style="font-size: 1.2rem; margin: 0; text-align: center; flex-grow: 1;">Analisis Makanan</h1>
+        <div style="width: 40px;"></div> <!-- Spacer penyeimbang kanan -->
+    </div>
+    <div class="search-box" style="width: 100%; margin-top: 10px;">
         <i class="fa-solid fa-magnifying-glass"></i>
         <input type="text" id="globalSearch" placeholder="Cari laporan...">
     </div>
