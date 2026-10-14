@@ -241,14 +241,22 @@ document.addEventListener("DOMContentLoaded", () => {
             pdfBtn.style.display = "none";
 
             const options = {
-                margin:       10,
+                margin:       [10, 10, 10, 10],
                 filename:     'Laporan_Analisis_SIRePan.pdf',
                 image:        { type: 'jpeg', quality: 0.98 },
-                html2canvas:  { scale: 2 },
+                html2canvas:  { 
+                    scale: 2, 
+                    useCORS: true, 
+                    letterRendering: true,
+                    windowWidth: document.getElementById("exportArea").scrollWidth // Menyesuaikan lebar elemen agar tidak terpotong di HP
+                },
                 jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
 
             html2pdf().set(options).from(element).save().then(() => {
+                pdfBtn.style.display = "inline-block";
+            }).catch(err => {
+                console.error("Gagal export PDF:", err);
                 pdfBtn.style.display = "inline-block";
             });
         });
@@ -459,19 +467,26 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         dataList.forEach(item => {
-            historyBody.innerHTML += `
-                <tr>
-                    <td style="padding: 10px;">${item.date}</td>
-                    <td style="padding: 10px; font-weight: bold;">${item.makanan}</td>
-                    <td style="padding: 10px;">${item.risk_summary}</td>
-                    <td style="padding: 10px;"><strong>${item.risk_score}</strong>/10</td>
-                    <td style="padding: 10px; text-align: center;">
-                        <button onclick='restoreAnalysis(${JSON.stringify(item.fullData)})' style="background: #0D8ABC; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
-                            <i class="fa-solid fa-eye"></i> Lihat
-                        </button>
-                    </td>
-                </tr>
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td style="padding: 10px;">${item.date}</td>
+                <td style="padding: 10px; font-weight: bold;">${item.makanan}</td>
+                <td style="padding: 10px;">${item.risk_summary}</td>
+                <td style="padding: 10px;"><strong>${item.risk_score}</strong>/10</td>
+                <td style="padding: 10px; text-align: center;">
+                    <button class="view-history-btn" style="background: #0D8ABC; color: white; border: none; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">
+                        <i class="fa-solid fa-eye"></i> Lihat
+                    </button>
+                </td>
             `;
+
+            // Event listener yang aman untuk tombol Lihat
+            const btn = tr.querySelector(".view-history-btn");
+            btn.addEventListener("click", () => {
+                restoreAnalysis(item.fullData);
+            });
+
+            historyBody.appendChild(tr);
         });
     }
 
