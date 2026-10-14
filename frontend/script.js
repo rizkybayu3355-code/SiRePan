@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Jalankan pengecekan lokasi secara otomatis saat halaman dimuat
+    checkAndRequestLocation();
+
     // ==========================================
     // --- TOGGLE SIDEBAR BUKA/TUTUP ---
     // ==========================================
@@ -14,7 +17,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        // Tutup sidebar otomatis di HP ketika salah satu menu diklik
         const navLinksList = document.querySelectorAll(".nav-link");
         navLinksList.forEach(link => {
             link.addEventListener("click", () => {
@@ -89,146 +91,17 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // ==========================================
-    // --- SISTEM AUTENTIKASI ---
+    // --- PORTAL FASKES ---
     // ==========================================
-    const authOverlay = document.getElementById("authOverlay");
-    const authForm = document.getElementById("authForm");
-    const authTitle = document.getElementById("authTitle");
-    const authSubmitBtn = document.getElementById("authSubmitBtn");
-    const authToggleText = document.getElementById("authToggleText");
-    
-    const userNameText = document.getElementById("userNameText");
-    const userAvatarImg = document.getElementById("userAvatarImg");
-    const userProfileBtn = document.getElementById("userProfileBtn");
-
-    let isRegisterMode = false;
-
-    function applyLoginState(email, role) {
-        if (!email) return;
-        const displayName = email.split('@')[0];
-        
-        if (userNameText) {
-            userNameText.innerHTML = role === "faskes" 
-                ? `<i class="fa-solid fa-user-check"></i> ${displayName} (Faskes)` 
-                : displayName;
-        }
-        
-        if (userAvatarImg) {
-            const bgColor = role === "faskes" ? "1e293b" : "0D8ABC";
-            userAvatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=${bgColor}&color=fff`;
-        }
-        
-        if (authOverlay) authOverlay.style.display = "none";
-    }
-
-    const savedUser = localStorage.getItem("activeUser");
-    const savedRole = localStorage.getItem("userRole");
-    
-    if (savedUser) {
-        applyLoginState(savedUser, savedRole);
-        appendLog(`[SYSTEM] Memulihkan sesi aktif untuk '${savedUser}'.`);
-        checkAndRequestLocation();
-    } else {
-        if (authOverlay) authOverlay.style.display = "flex";
-    }
-
-    if (authToggleText) {
-        authToggleText.addEventListener("click", (e) => {
-            e.preventDefault();
-            isRegisterMode = !isRegisterMode; 
-            
-            if (isRegisterMode) {
-                authTitle.innerText = "Daftar Akun Baru";
-                authSubmitBtn.innerText = "Daftar Sekarang";
-                authToggleText.innerHTML = `Sudah punya akun? <a href="#">Masuk di sini</a>`;
-            } else {
-                authTitle.innerText = "Masuk ke SIRePan";
-                authSubmitBtn.innerText = "Masuk";
-                authToggleText.innerHTML = `Belum punya akun? <a href="#">Daftar di sini</a>`;
-            }
-        });
-    }
-
-    if (authForm) {
-        authForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-            const emailInput = document.getElementById("authEmail");
-            const passInput = document.getElementById("authPassword");
-            
-            if (!emailInput || !passInput) return;
-
-            const email = emailInput.value.trim().toLowerCase();
-            const password = passInput.value.trim();
-            let usersDB = JSON.parse(localStorage.getItem("sirepanUsers")) || {};
-
-            if (isRegisterMode) {
-                if (usersDB[email]) {
-                    showCustomAlert("Email ini sudah terdaftar! Silakan gunakan email lain.", "error");
-                    return;
-                }
-                usersDB[email] = { password: password, role: "public" };
-                localStorage.setItem("sirepanUsers", JSON.stringify(usersDB));
-                showCustomAlert("Pendaftaran berhasil! Silakan masuk dengan akun yang baru dibuat.", "success");
-                
-                isRegisterMode = false;
-                authTitle.innerText = "Masuk ke SIRePan";
-                authSubmitBtn.innerText = "Masuk";
-                authToggleText.innerHTML = `Belum punya akun? <a href="#" id="toggleAuthMode">Daftar di sini</a>`;
-                authForm.reset();
-            } else {
-                if (!usersDB[email] || usersDB[email].password !== password) {
-                    showCustomAlert("Alamat email atau kata sandi salah!", "error");
-                    return;
-                }
-                localStorage.setItem("activeUser", email);
-                localStorage.setItem("userRole", usersDB[email].role);
-                
-                applyLoginState(email, usersDB[email].role);
-                appendLog(`[AUTH] Pengguna '${email}' berhasil masuk.`);
-                authForm.reset();
-                checkAndRequestLocation();
-            }
-        });
-    }
-
-    // ==========================================
-    // --- LOGOUT & FASKES MODAL ---
-    // ==========================================
-    const logoutModal = document.getElementById("logoutModal");
-    const confirmLogoutBtn = document.getElementById("confirmLogoutBtn");
-    const cancelLogoutBtn = document.getElementById("cancelLogoutBtn");
-
-    if (userProfileBtn) {
-        userProfileBtn.addEventListener("click", () => {
-            if (localStorage.getItem("activeUser") && logoutModal) {
-                logoutModal.classList.remove("hidden");
-            }
-        });
-    }
-
-    if (cancelLogoutBtn) {
-        cancelLogoutBtn.addEventListener("click", () => logoutModal.classList.add("hidden"));
-    }
-
-    if (confirmLogoutBtn) {
-        confirmLogoutBtn.addEventListener("click", () => {
-            localStorage.removeItem("activeUser");
-            localStorage.removeItem("userRole");
-            location.reload(); 
-        });
-    }
-
     const faskesBtn = document.getElementById("faskesBtn");
     const faskesModal = document.getElementById("faskesModal");
     const closeFaskes = document.getElementById("closeFaskes");
     const faskesLoginForm = document.getElementById("faskesLoginForm");
+    const userNameText = document.getElementById("userNameText");
+    const userAvatarImg = document.getElementById("userAvatarImg");
 
     if (faskesBtn && faskesModal) {
         faskesBtn.addEventListener("click", () => {
-            if (localStorage.getItem("activeUser") && localStorage.getItem("userRole") !== "faskes") {
-                showCustomAlert("Anda harus logout terlebih dahulu untuk mengganti akun umum ke akun Faskes.", "info");
-                return;
-            }
             faskesModal.classList.remove("hidden");
         });
     }
@@ -242,11 +115,10 @@ document.addEventListener("DOMContentLoaded", () => {
             e.preventDefault();
             const faskesName = document.getElementById("faskesName").value.trim();
             if (faskesName) {
-                localStorage.setItem("activeUser", faskesName);
-                localStorage.setItem("userRole", "faskes");
-                applyLoginState(faskesName, "faskes");
-                appendLog(`[FASKES AUTH] ${faskesName} terverifikasi untuk akses klinis.`);
-                showCustomAlert(`Selamat datang, Petugas ${faskesName}. Anda sekarang berada dalam mode pencatatan & verifikasi Faskes.`, "success");
+                if (userNameText) userNameText.innerHTML = `<i class="fa-solid fa-user-check"></i> ${faskesName} (Faskes)`;
+                if (userAvatarImg) userAvatarImg.src = `https://ui-avatars.com/api/?name=${encodeURIComponent(faskesName)}&background=1e293b&color=fff`;
+                appendLog(`[FASKES] ${faskesName} aktif dalam mode verifikasi klinis.`);
+                showCustomAlert(`Selamat datang, Petugas ${faskesName}. Mode Faskes diaktifkan.`, "success");
             }
             faskesModal.classList.add("hidden");
             faskesLoginForm.reset();
@@ -279,10 +151,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             try {
                 const response = await fetch("https://sirepan-production.up.railway.app/api/analyze", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
 
                 if (!response.ok) throw new Error("Gagal terhubung ke backend FastAPI");
 
@@ -594,7 +466,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             } else {
                 alertBanner.classList.add("status-green");
-                // Memastikan ikon perisai dimunculkan kembali dengan tag <i>
                 if (bannerIcon) bannerIcon.innerHTML = '<i class="fa-solid fa-shield-halved"></i>';
                 if (alertText) {
                     alertText.innerText = "Kondisi lingkungan terpantau aman. Belum ada lonjakan kasus keracunan makanan di sekitar Anda dalam 2 minggu terakhir.";
@@ -680,9 +551,4 @@ document.addEventListener("DOMContentLoaded", () => {
         if (analysisNavLink) analysisNavLink.click();
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
-
-    if (!savedUser) {
-        fetchWeatherAndRiskIndex(-6.2088, 106.8456);
-        loadHistory();
-    }
 });

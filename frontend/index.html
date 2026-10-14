@@ -9,57 +9,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 </head>
 <body>
-    <!-- LAYAR LOGIN & DAFTAR (AUTH OVERLAY) -->
-    <style>
-        #authOverlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: #0f172a;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 99999;
-            transition: opacity 0.5s ease;
-        }
-        .auth-box {
-            background: #1e293b;
-            padding: 30px;
-            border-radius: 8px;
-            width: 100%;
-            max-width: 400px;
-            color: white;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
-        }
-        .auth-box h2 { margin-top: 0; color: #38bdf8; text-align: center; margin-bottom: 20px;}
-        .auth-group { margin-bottom: 15px; }
-        .auth-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #cbd5e1;}
-        .auth-group input { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #475569; background: #0f172a; color: white; box-sizing: border-box;}
-        .auth-btn { width: 100%; padding: 10px; background: #0D8ABC; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px;}
-        .auth-btn:hover { background: #0284c7; }
-        .auth-switch { text-align: center; margin-top: 15px; font-size: 0.85rem; color: #94a3b8;}
-        .auth-switch a { color: #38bdf8; text-decoration: none; font-weight: bold; cursor: pointer;}
-    </style>
-
-    <div id="authOverlay">
-        <div class="auth-box">
-            <h2 id="authTitle">Masuk ke SIRePan</h2>
-            <form id="authForm">
-                <div class="auth-group">
-                    <label>Alamat Email</label>
-                    <input type="email" id="authEmail" placeholder="namapengguna@email.com" required>
-                </div>
-                <div class="auth-group">
-                    <label>Kata Sandi</label>
-                    <input type="password" id="authPassword" placeholder="Masukkan sandi..." required>
-                </div>
-                <button type="submit" class="auth-btn" id="authSubmitBtn">Masuk</button>
-            </form>
-            <p class="auth-switch" id="authToggleText">
-                Belum punya akun? <a href="#" id="toggleAuthMode">Daftar di sini</a>
-            </p>
-        </div>
-    </div>
-
     <!-- KONTAINER APLIKASI UTAMA -->
     <div class="app-container">
         <!-- SIDEBAR NAVIGASI -->
@@ -79,11 +28,11 @@
                 <button id="faskesBtn" class="btn-faskes-trigger">
                     <i class="fa-solid fa-user-doctor"></i> Portal Faskes
                 </button>
-                <div id="userProfileBtn" class="user-profile-info" style="cursor: pointer;" title="Klik untuk Logout">
-                    <img id="userAvatarImg" src="https://ui-avatars.com/api/?name=Guest&background=0D8ABC&color=fff" alt="Avatar">
+                <div class="user-profile-info">
+                    <img id="userAvatarImg" src="https://ui-avatars.com/api/?name=Warga&background=0D8ABC&color=fff" alt="Avatar">
                     <div>
-                        <span id="userNameText" class="user-name">Guest</span>
-                        <span class="user-role">Pengunjung Umum</span>
+                        <span id="userNameText" class="user-name">Masyarakat Umum</span>
+                        <span class="user-role">Pengguna Aktif</span>
                     </div>
                 </div>
             </div>
@@ -306,7 +255,55 @@
     <div id="faskesModal" class="modal hidden">
         <div class="modal-content modal-faskes">
             <div class="modal-header header-faskes">
-                <h3><i class="fa-solid fa-hospital-user"></i> Login Petugas Kesehatan / Faskes</h3>
+                <h3><i class="fa-solid fa-hospital-user"></i> Portal Verifikasi Faskes</h3>
                 <button id="closeFaskes" class="btn-close">&times;</button>
             </div>
-            <div class="faskes-info-
+            <div class="faskes-info-box">
+                <p><i class="fa-solid fa-circle-info"></i> Mode ini khusus untuk verifikasi sampel klinis dan validasi uji laboratorium oleh petugas kesehatan.</p>
+            </div>
+            <form id="faskesLoginForm">
+                <div class="form-group">
+                    <label>Nama Fasilitas Kesehatan / Puskesmas</label>
+                    <input type="text" id="faskesName" placeholder="Contoh: Puskesmas Sukajadi" required>
+                </div>
+                <div class="form-group">
+                    <label>ID Verifikasi Petugas Medis</label>
+                    <input type="password" id="faskesCode" placeholder="Masukkan ID Verifikasi" required>
+                </div>
+                <button type="submit" class="btn-faskes-submit">
+                    <i class="fa-solid fa-user-check"></i> Aktifkan Mode Faskes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL PEMBERITAHUAN (CUSTOM ALERT) -->
+    <div id="customAlertModal" class="modal hidden" style="z-index: 100000;">
+        <div class="modal-content" style="max-width: 350px; text-align: center;">
+            <div id="customAlertIcon" style="font-size: 3rem; margin-bottom: 15px;"></div>
+            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Informasi</h3>
+            <p id="customAlertText" style="color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;"></p>
+            <button id="customAlertBtn" style="background: #0D8ABC; color: white; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer;">OK</button>
+        </div>
+    </div>
+
+    <!-- MODAL PERIZINAN LOKASI -->
+    <div id="locationPermissionModal" class="modal hidden" style="z-index: 999999; background: rgba(15, 23, 42, 0.85);">
+        <div class="modal-content" style="max-width: 420px; text-align: center; padding: 30px;">
+            <div style="font-size: 3.5rem; color: #0D8ABC; margin-bottom: 15px;">
+                <i class="fa-solid fa-location-crosshairs"></i>
+            </div>
+            <h3 style="color: var(--text-dark); margin-bottom: 10px; font-size: 1.2rem;">Aktifkan Pemantauan Wilayah</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px;">
+                SIRePan memerlukan akses lokasi perangkat Anda untuk mendeteksi laporan keracunan makanan secara akurat dalam <strong>radius 10 km</strong> di sekitar Anda.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="denyLocationBtn" class="btn-secondary" style="flex: 1; padding: 10px;">Nanti Saja</button>
+                <button id="grantLocationBtn" class="btn-primary" style="flex: 1; padding: 10px;">Izinkan Lokasi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
