@@ -18,6 +18,11 @@
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+html, body {
+    width: 100%;
+    overflow-x: hidden;
+}
+
 body {
     background-color: var(--bg-light);
     color: var(--text-dark);
@@ -26,6 +31,7 @@ body {
 .app-container {
     display: flex;
     min-height: 100vh;
+    width: 100%;
 }
 
 /* --- SIDEBAR --- */
@@ -37,6 +43,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     padding: 15px 15px;
+    flex-shrink: 0;
 }
 
 .brand {
@@ -129,6 +136,7 @@ body {
 .main-content {
     flex: 1;
     overflow-y: auto;
+    min-width: 0;
 }
 
 .top-bar {
@@ -138,11 +146,14 @@ body {
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--border-color);
+    flex-wrap: wrap;
+    gap: 15px;
 }
 
 .search-box {
     position: relative;
     width: 300px;
+    max-width: 100%;
 }
 
 .search-box i {
@@ -252,7 +263,7 @@ body {
 
 .dashboard-col {
     flex: 1;
-    min-width: 300px;
+    min-width: 280px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -302,6 +313,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    min-width: 120px;
 }
 
 .btn-report-case {
@@ -318,6 +330,7 @@ body {
     align-items: center;
     justify-content: center;
     gap: 6px;
+    min-width: 120px;
 }
 
 .public-stats-row {
@@ -325,6 +338,7 @@ body {
     justify-content: space-between;
     text-align: center;
     margin-top: 10px;
+    gap: 10px;
 }
 
 .stat-label {
@@ -360,17 +374,19 @@ body {
     margin-bottom: 5px;
 }
 
-.form-group input {
+.form-group input, .form-group select, .form-group textarea {
     width: 100%;
     padding: 10px;
     border: 1px solid var(--border-color);
     border-radius: 6px;
     outline: none;
+    font-size: 0.9rem;
 }
 
 .form-actions {
     display: flex;
     gap: 10px;
+    flex-wrap: wrap;
 }
 
 .btn-primary {
@@ -438,6 +454,8 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .btn-export {
@@ -459,6 +477,8 @@ body {
     padding: 16px 20px;
     border-radius: 8px;
     margin-bottom: 12px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .score-box {
@@ -499,7 +519,7 @@ body {
 
 .patogen-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -605,6 +625,7 @@ body {
     align-items: center;
     justify-content: center;
     z-index: 1000;
+    padding: 15px;
 }
 
 .modal-content {
@@ -613,6 +634,7 @@ body {
     border-radius: 12px;
     width: 100%;
     max-width: 450px;
+    box-sizing: border-box;
 }
 
 .modal-header {
@@ -679,10 +701,14 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .table-responsive {
+    width: 100%;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 .data-table {
@@ -691,6 +717,7 @@ body {
     background: white;
     border-radius: 8px;
     overflow: hidden;
+    min-width: 600px;
 }
 
 .data-table th, .data-table td {
@@ -710,8 +737,62 @@ body {
     overflow-y: auto;
 }
 
+/* --- RESPONSIVE MEDIA QUERIES UNTUK HP / LAYAR KECIL --- */
 @media (max-width: 768px) {
+    .app-container {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 12px 15px;
+    }
+
+    .nav-menu {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+
+    .nav-link {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        flex: 1;
+        justify-content: center;
+        min-width: 110px;
+    }
+
+    .user-profile-card {
+        display: none; /* Sembunyikan profil samping di HP sempit, atau sesuaikan jika perlu */
+    }
+
+    .main-content {
+        width: 100%;
+    }
+
+    .top-bar {
+        padding: 15px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-box {
+        width: 100%;
+    }
+
+    .p-30 {
+        padding: 15px;
+    }
+
     .two-column-grid {
         grid-template-columns: 1fr;
+    }
+
+    .alert-banner {
+        flex-direction: column;
+        align-items: flex-start;
+        text-align: left;
     }
 }
