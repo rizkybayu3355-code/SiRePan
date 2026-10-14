@@ -616,7 +616,7 @@ document.addEventListener("DOMContentLoaded", () => {
     window.restoreAnalysis = function(data) {
         renderAnalysisResult(data);
         
-        // Cari dan aktifkan tab Analisis Makanan secara otomatis
+        // Tetap pastikan berada di tab Analisis, tetapi langsung fokus ke area hasil laporan
         const navLinks = document.querySelectorAll(".nav-link");
         const tabContents = document.querySelectorAll(".tab-content");
         const pageTitle = document.getElementById("pageTitle");
@@ -629,9 +629,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (analysisNavLink) analysisNavLink.classList.add("active");
         if (analysisTabContent) analysisTabContent.classList.remove("hidden");
-        if (pageTitle) pageTitle.innerText = "Analisis Makanan";
+        if (pageTitle) pageTitle.innerText = "Detail Laporan Analisis";
 
-        // Gulir halaman ke paling atas agar laporan langsung terlihat
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        // Gulir halaman langsung ke area hasil laporan (exportArea / analysisResultContainer)
+        const exportArea = document.getElementById("exportArea");
+        if (exportArea) {
+            exportArea.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
     };
 });
