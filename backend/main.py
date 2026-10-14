@@ -24,10 +24,8 @@ class FoodPoisoningReport(BaseModel):
     lokasi: str
 
 def load_pathogen_database() -> list:
-    db_path = "backend/database.json"
+    db_path = "database.json"
     if not os.path.exists(db_path):
-        # Fallback jika dijalankan langsung dari dalam folder backend
-        db_path = "database.json"
         return []
     try:
         with open(db_path, "r", encoding="utf-8") as f:
