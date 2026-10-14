@@ -805,3 +805,22 @@ body {
         text-align: left;
     }
 }
+
+/* Hiasan daun di bagian bawah sidebar */
+.sidebar {
+    position: relative;
+    overflow: hidden;
+}
+
+.sidebar::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 120px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 150" opacity="0.08"><path fill="%23ffffff" d="M20,150 C40,120 20,80 50,50 C60,40 75,45 80,30 C90,10 110,10 115,30 C120,45 135,40 145,50 C175,80 155,120 175,150 Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: bottom left;
+    pointer-events: none;
+}
