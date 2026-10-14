@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRePan - Sistem Informasi Recall Pangan</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+    <!-- LAYAR LOGIN & DAFTAR (AUTH OVERLAY) -->
+    <style>
+        #authOverlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 99999;
+            transition: opacity 0.5s ease;
+        }
+        .auth-box {
+            background: #1e293b;
+            padding: 30px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .auth-box h2 { margin-top: 0; color: #38bdf8; text-align: center; margin-bottom: 20px;}
+        .auth-group { margin-bottom: 15px; }
+        .auth-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; color: #cbd5e1;}
+        .auth-group input { width: 100%; padding: 10px; border-radius: 4px; border: 1px solid #475569; background: #0f172a; color: white; box-sizing: border-box;}
+        .auth-btn { width: 100%; padding: 10px; background: #0D8ABC; color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; margin-top: 10px;}
+        .auth-btn:hover { background: #0284c7; }
+        .auth-switch { text-align: center; margin-top: 15px; font-size: 0.85rem; color: #94a3b8;}
+        .auth-switch a { color: #38bdf8; text-decoration: none; font-weight: bold; cursor: pointer;}
+    </style>
+
+    <div id="authOverlay">
+        <div class="auth-box">
+            <h2 id="authTitle">Masuk ke SIRePan</h2>
+            <form id="authForm">
+                <div class="auth-group">
+                    <label>Alamat Email</label>
+                    <input type="email" id="authEmail" placeholder="namapengguna@email.com" required>
+                </div>
+                <div class="auth-group">
+                    <label>Kata Sandi</label>
+                    <input type="password" id="authPassword" placeholder="Masukkan sandi..." required>
+                </div>
+                <button type="submit" class="auth-btn" id="authSubmitBtn">Masuk</button>
+            </form>
+            <p class="auth-switch" id="authToggleText">
+                Belum punya akun? <a href="#" id="toggleAuthMode">Daftar di sini</a>
+            </p>
+        </div>
+    </div>
+
+    <!-- KONTAINER APLIKASI UTAMA -->
+    <div class="app-container">
+        <!-- SIDEBAR NAVIGASI -->
+        <aside class="sidebar">
+            <div class="brand">
+                <i class="fa-solid fa-shield-virus"></i>
+                <h2>SIRePan</h2>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-link active" data-tab="dashboard-tab"><i class="fa-solid fa-chart-line"></i> Pantau Sehat</a>
+                <a href="#" class="nav-link" data-tab="analysis-tab"><i class="fa-solid fa-utensils"></i> Analisis Makanan</a>
+                <a href="#" class="nav-link" data-tab="logs-tab"><i class="fa-solid fa-clock-rotate-left"></i> Riwayat Laporan</a>
+                <a href="#" class="nav-link" data-tab="settings-tab"><i class="fa-solid fa-gear"></i> Pengaturan</a>
+                <a href="#" class="nav-link" data-tab="help-tab"><i class="fa-solid fa-circle-question"></i> Bantuan</a>
+            </nav>
+            <div class="user-profile-card">
+                <button id="faskesBtn" class="btn-faskes-trigger">
+                    <i class="fa-solid fa-user-doctor"></i> Portal Faskes
+                </button>
+                <div id="userProfileBtn" class="user-profile-info" style="cursor: pointer;" title="Klik untuk Logout">
+                    <img id="userAvatarImg" src="https://ui-avatars.com/api/?name=Guest&background=0D8ABC&color=fff" alt="Avatar">
+                    <div>
+                        <span id="userNameText" class="user-name">Guest</span>
+                        <span class="user-role">Pengunjung Umum</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- KONTEN UTAMA -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h1 id="pageTitle">Pantau Sehat Warga</h1>
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" id="globalSearch" placeholder="Cari laporan makanan atau gejala...">
+                </div>
+            </header>
+
+            <!-- TAB 1: DASHBOARD Warga -->
+            <div id="dashboard-tab" class="tab-content p-30">
+                <div class="alert-banner status-green">
+                    <div class="banner-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div>
+                        <h3>Peringatan Keamanan Pangan Wilayah</h3>
+                        <p id="alertText">Memuat data pantauan kesehatan masyarakat...</p>
+                    </div>
+                </div>
+
+                <div class="dashboard-grid">
+                    <!-- Kolom Kiri -->
+                    <div class="dashboard-col">
+                        <div class="stat-card emergency-card">
+                            <h4 class="emergency-title">
+                                <i class="fa-solid fa-phone-volume"></i> Bantuan Darurat Keracunan
+                            </h4>
+                            <p class="card-desc">Jika mengalami gejala berat seperti sesak napas atau kejang, segera hubungi layanan darurat:</p>
+                            <div class="action-buttons">
+                                <a href="tel:119" class="btn-call-119">
+                                    <i class="fa-solid fa-ambulance"></i> Ambulans (119)
+                                </a>
+                                <button type="button" onclick="document.querySelector('[data-tab=\'analysis-tab\']').click()" class="btn-report-case">
+                                    <i class="fa-solid fa-file-medical"></i> Laporkan Kasus
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- KARTU WIDGET INDIKATOR CUACA & RISIKO PANGAN -->
+                        <div class="stat-card" style="background: linear-gradient(to bottom right, #f8fafc, #f1f5f9); border: 1px solid #e2e8f0;">
+                            <h4 style="color: var(--primary-color); display: flex; align-items: center; justify-content: space-between;">
+                                <span><i class="fa-solid fa-cloud-sun"></i> Indeks Risiko Pangan & Cuaca</span>
+                                <span id="weatherTempIndicator" style="font-size: 0.8rem; background: #e0f2fe; color: #0369a1; padding: 2px 8px; border-radius: 12px; font-weight: normal;">Memuat cuaca...</span>
+                            </h4>
+                            <div id="weatherRiskWidget" style="margin-top: 12px;">
+                                <p style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5;">
+                                    <i class="fa-solid fa-spinner fa-spin"></i> Menganalisis suhu lingkungan sekitar untuk menentukan tingkat ketahanan makanan...
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kolom Kanan -->
+                    <div class="dashboard-col">
+                        <!-- Kartu Laporan Warga Sekitar (Radius 10 km & 14 Hari) -->
+                        <div class="stat-card">
+                            <h4><i class="fa-solid fa-users"></i> Laporan Warga Sekitar</h4>
+                            <p style="font-size: 0.75rem; color: #64748b; margin-top: -5px; margin-bottom: 15px; background: #f1f5f9; padding: 4px 8px; border-radius: 4px; display: inline-block;">
+                                <i class="fa-solid fa-location-dot" style="color: #ef4444;"></i> Radius 10 km &nbsp;|&nbsp; <i class="fa-solid fa-calendar-day"></i> 14 Hari Terakhir
+                            </p>
+                            <div class="public-stats-row">
+                                <div>
+                                    <p class="stat-label">Total Laporan</p>
+                                    <p class="stat-value" id="publicTotal">0</p>
+                                </div>
+                                <div>
+                                    <p class="stat-label">Kasus Mual/Diare</p>
+                                    <p class="stat-value warning" id="publicDigestive">0</p>
+                                </div>
+                                <div>
+                                    <p class="stat-label">Perlu Ke RS</p>
+                                    <p class="stat-value danger" id="publicUrgent">0</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Kartu Edukasi & Tips Keamanan Makanan Harian -->
+                        <div class="stat-card" style="background: linear-gradient(to bottom right, #f0f9ff, #e0f2fe); border: 1px solid #bae6fd;">
+                            <h4 style="color: #0369a1;"><i class="fa-solid fa-lightbulb"></i> Tips Keamanan Makanan Hari Ini</h4>
+                            <p style="font-size: 0.85rem; color: #334155; line-height: 1.5; margin-top: 8px;">
+                                <strong>Waspada Makanan Bersantan & Nasi Sisa:</strong> Jangan mengonsumsi makanan berkuah santan atau nasi sisa yang sudah dibiarkan di suhu ruang lebih dari 4 jam tanpa dihangatkan kembali di atas 75°C.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FORM ANALISIS MAKANAN -->
+            <div id="analysis-tab" class="tab-content hidden p-30">
+                <form id="poisonForm" class="analysis-form">
+                    <div class="form-group">
+                        <label for="makanan">Nama / Jenis Makanan</label>
+                        <input type="text" id="makanan" placeholder="Contoh: Bakso urat, Susu kedelai, Singkong tape" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="gejala">Gejala yang Dirasakan</label>
+                        <input type="text" id="gejala" placeholder="Contoh: Mual, demam, menggigil, diare" required>
+                    </div>
+                    <div class="two-column-grid" style="gap: 15px; margin-bottom: 0;">
+                        <div class="form-group">
+                            <label for="jamKonsumsi">Jam Makanan Dikonsumsi</label>
+                            <input type="time" id="jamKonsumsi" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="durasiGejalaJam">Berapa Jam Setelah Makan Gejala Timbul?</label>
+                            <input type="number" id="durasiGejalaJam" step="1" min="1" max="168" placeholder="Contoh: 6" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lokasi">Lokasi Pembelian / Kejadian</label>
+                        <input type="text" id="lokasi" placeholder="Contoh: Kantin sekolah, Pasar tradisional">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn-primary"><i class="fa-solid fa-microchip"></i> Analisis dengan AI</button>
+                        <button type="button" id="resetBtn" class="btn-secondary">Reset</button>
+                    </div>
+                </form>
+
+                <div id="loadingStatus" class="loading-spinner hidden">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Mengevaluasi gejala dan pola masa inkubasi...
+                </div>
+
+                <div id="emptyState" class="empty-state">
+                    <i class="fa-solid fa-vial-circle-check"></i>
+                    <p>Silakan isi formulir di atas untuk memulai analisis potensi keracunan makanan.</p>
+                </div>
+
+                <div id="analysisResultContainer" class="result-container hidden">
+                    <div id="exportArea">
+                        <div class="result-header">
+                            <h3>Hasil Analisis Risiko Kesehatan</h3>
+                            <button id="pdfBtn" class="btn-export"><i class="fa-solid fa-file-pdf"></i> Ekspor PDF</button>
+                        </div>
+                        <div class="risk-overview">
+                            <div>
+                                <h4>Ringkasan Risiko</h4>
+                                <p id="riskText">-</p>
+                            </div>
+                            <div class="score-box">
+                                <span id="riskScore">0</span>
+                                <small>/10</small>
+                            </div>
+                        </div>
+                        <div class="progress-bar-container">
+                            <div id="riskFill" class="progress-bar-fill"></div>
+                        </div>
+
+                        <div class="section-title">Potensi Patogen / Kontaminan</div>
+                        <div id="patogenContainer" class="patogen-grid"></div>
+
+                        <div class="section-title">Gejala Terdeteksi</div>
+                        <div id="gejalaTags" class="tags-container"></div>
+
+                        <div class="two-column-grid">
+                            <div>
+                                <div class="section-title">Rekomendasi Pertolongan Pertama</div>
+                                <ul id="firstAidList" class="styled-list"></ul>
+                            </div>
+                            <div>
+                                <div class="section-title">Panduan Uji / Verifikasi Lanjutan</div>
+                                <ul id="labList" class="styled-list"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: RIWAYAT & LOGS -->
+            <div id="logs-tab" class="tab-content hidden p-30">
+                <div class="logs-header">
+                    <h3>Riwayat Laporan & Analisis</h3>
+                    <button id="clearHistoryBtn" class="btn-danger"><i class="fa-solid fa-trash"></i> Hapus Semua Riwayat</button>
+                </div>
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Waktu Lapor</th>
+                                <th>Makanan</th>
+                                <th>Ringkasan Risiko</th>
+                                <th>Skor</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="historyBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="system-logs-container" style="margin-top: 20px;">
+                    <h4>System Logs</h4>
+                    <pre id="logOutput" class="console-box">[SYSTEM] Sistem SIRePan siap digunakan.</pre>
+                </div>
+            </div>
+
+            <!-- TAB 4 & 5: SETTINGS & HELP -->
+            <div id="settings-tab" class="tab-content hidden p-30">
+                <h3>Pengaturan Sistem</h3>
+                <p>Konfigurasi endpoint FastAPI, Groq API Key, dan opsi pencetakan PDF.</p>
+            </div>
+            <div id="help-tab" class="tab-content hidden p-30">
+                <h3>Panduan Penggunaan</h3>
+                <p>SIRePan membantu deteksi dini risiko keracunan pangan berbasis kecerdasan buatan.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- MODAL PORTAL KHUSUS FASKES -->
+    <div id="faskesModal" class="modal hidden">
+        <div class="modal-content modal-faskes">
+            <div class="modal-header header-faskes">
+                <h3><i class="fa-solid fa-hospital-user"></i> Login Petugas Kesehatan / Faskes</h3>
+                <button id="closeFaskes" class="btn-close">&times;</button>
+            </div>
+            <div class="faskes-info-box">
+                <p><i class="fa-solid fa-circle-info"></i> Mode ini khusus untuk verifikasi sampel klinis, validasi uji laboratorium, dan penanganan laporan KLB oleh Puskesmas/Dinkes.</p>
+            </div>
+            <form id="faskesLoginForm">
+                <div class="form-group">
+                    <label>Nama Fasilitas Kesehatan / Puskesmas</label>
+                    <input type="text" id="faskesName" placeholder="Contoh: Puskesmas Sukajadi" required>
+                </div>
+                <div class="form-group">
+                    <label>NIP / ID Verifikasi Petugas Medis</label>
+                    <input type="password" id="faskesCode" placeholder="Masukkan ID Verifikasi" required>
+                </div>
+                <button type="submit" class="btn-faskes-submit">
+                    <i class="fa-solid fa-user-check"></i> Masuk Mode Verifikasi Faskes
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL KONFIRMASI LOGOUT -->
+    <div id="logoutModal" class="modal hidden">
+        <div class="modal-content" style="max-width: 400px; text-align: center;">
+            <div style="font-size: 3rem; color: #ef4444; margin-bottom: 15px;">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </div>
+            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Konfirmasi Keluar</h3>
+            <p style="color: var(--text-muted); margin-bottom: 25px;">Apakah Anda yakin ingin keluar dari sistem SIRePan?</p>
+            
+            <div style="display: flex; gap: 15px; justify-content: center;">
+                <button id="cancelLogoutBtn" class="btn-secondary" style="flex: 1; padding: 10px 15px;">Batal</button>
+                <button id="confirmLogoutBtn" style="flex: 1; background: #ef4444; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer;">Ya, Keluar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PEMBERITAHUAN (CUSTOM ALERT) -->
+    <div id="customAlertModal" class="modal hidden" style="z-index: 100000;">
+        <div class="modal-content" style="max-width: 350px; text-align: center;">
+            <div id="customAlertIcon" style="font-size: 3rem; margin-bottom: 15px;"></div>
+            <h3 style="color: var(--text-dark); margin-bottom: 10px;">Informasi</h3>
+            <p id="customAlertText" style="color: var(--text-muted); margin-bottom: 25px; line-height: 1.5;"></p>
+            <button id="customAlertBtn" style="background: #0D8ABC; color: white; border: none; padding: 10px 30px; border-radius: 4px; font-weight: bold; cursor: pointer;">OK</button>
+        </div>
+    </div>
+
+    <!-- MODAL PERIZINAN LOKASI YANG LEBIH PROPER -->
+    <div id="locationPermissionModal" class="modal hidden" style="z-index: 999999; background: rgba(15, 23, 42, 0.85);">
+        <div class="modal-content" style="max-width: 420px; text-align: center; padding: 30px;">
+            <div style="font-size: 3.5rem; color: #0D8ABC; margin-bottom: 15px;">
+                <i class="fa-solid fa-location-crosshairs"></i>
+            </div>
+            <h3 style="color: var(--text-dark); margin-bottom: 10px; font-size: 1.2rem;">Aktifkan Pemantauan Wilayah</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; line-height: 1.5; margin-bottom: 25px;">
+                SIRePan memerlukan akses lokasi perangkat Anda untuk mendeteksi laporan keracunan makanan secara akurat dalam <strong>radius 10 km</strong> di sekitar Anda. Privasi Anda aman dan hanya digunakan untuk peringatan dini.
+            </p>
+            <div style="display: flex; gap: 12px; justify-content: center;">
+                <button id="denyLocationBtn" class="btn-secondary" style="flex: 1; padding: 10px;">Nanti Saja</button>
+                <button id="grantLocationBtn" class="btn-primary" style="flex: 1; padding: 10px;">Izinkan Lokasi</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
