@@ -14,15 +14,22 @@
         <!-- SIDEBAR NAVIGASI -->
         <aside class="sidebar">
            <div class="brand" style="display: flex; align-items: center; gap: 10px; padding: 20px 15px;">
-    <!-- Ikon logo sesuai gambar rujukan -->
-    <div style="background: #e2e8f0; width: 42px; height: 42px; border-radius: 8px; display: flex; align-items: center; justify-content: center; position: relative; flex-shrink: 0;">
-        <i class="fa-solid fa-shield-halved" style="font-size: 1.5rem; color: #10b981;"></i>
-        <i class="fa-solid fa-magnifying-glass" style="font-size: 0.85rem; color: #0f172a; position: absolute; bottom: 2px; right: 2px; background: #ffffff; border-radius: 50%; padding: 2px;"></i>
+    <!-- Menggunakan SVG ilustrasi daun & perisai agar persis seperti gambar rujukan -->
+    <div style="width: 42px; height: 42px; flex-shrink: 0; display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 100 100" style="width: 100%; height: 100%;">
+            <path d="M50 10 C30 15, 15 25, 15 50 C15 75, 40 90, 50 95 C60 90, 85 75, 85 50 C85 25, 70 15, 50 10 Z" fill="#34d399" opacity="0.2"/>
+            <path d="M50 15 C33 20, 20 28, 20 50 C20 71, 42 85, 50 90 C58 85, 80 71, 80 50 C80 28, 67 20, 50 15 Z" fill="#10b981"/>
+            <!-- Daun kecil di dalam perisai -->
+            <path d="M50 30 Q65 30 65 50 Q65 65 50 75 Q35 65 35 50 Q35 30 50 30 Z" fill="#ecfdf5"/>
+            <!-- Kaca pembesar -->
+            <circle cx="62" cy="62" r="14" fill="#ffffff" stroke="#0f172a" stroke-width="4"/>
+            <line x1="72" y1="72" x2="88" y2="88" stroke="#0f172a" stroke-width="4" stroke-linecap="round"/>
+        </svg>
     </div>
     <!-- Teks Judul dan Tagline -->
     <div>
         <h2 style="color: #ffffff; font-size: 1.35rem; font-weight: bold; margin: 0; line-height: 1.1;">SiRe<span style="color: #34d399;">Pan</span></h2>
-        <span style="font-size: 0.65rem; color: #94a3b8; display: block; margin-top: 3px; font-weight: 500; letter-spacing: 0.2px;">Sistem Informasi Recall Pangan</span>
+        <span style="font-size: 0.62rem; color: #94a3b8; display: block; margin-top: 3px; font-weight: 500; letter-spacing: 0.2px;">Sistem Informasi Recall Pangan</span>
     </div>
 </div>
             <nav class="nav-menu">
@@ -63,15 +70,22 @@
 
             <!-- TAB 1: DASHBOARD Warga -->
             <div id="dashboard-tab" class="tab-content p-30">
-                <div class="alert-banner status-green">
-                    <div class="banner-icon">
-                        <i class="fa-solid fa-shield-halved"></i>
-                    </div>
-                    <div>
-                        <h3>Peringatan Keamanan Pangan Wilayah</h3>
-                        <p id="alertText">Memuat data pantauan kesehatan masyarakat...</p>
-                    </div>
-                </div>
+                <div class="alert-banner status-green" style="position: relative; overflow: hidden;">
+    <div style="display: flex; align-items: center; gap: 15px; z-index: 2; position: relative;">
+        <div class="banner-icon" style="background: #10b981; color: white; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.25rem; flex-shrink: 0;">
+            <i class="fa-solid fa-shield-halved"></i>
+        </div>
+        <div>
+            <h3 style="color: #065f46; font-size: 1.05rem; font-weight: bold; margin-bottom: 4px;">Peringatan Keamanan Pangan Wilayah</h3>
+            <p id="alertText" style="color: #047857; font-size: 0.9rem; line-height: 1.4;">Kondisi lingkungan terpantau aman. Belum ada lonjakan kasus keracunan makanan di sekitar Anda dalam 2 minggu terakhir.</p>
+        </div>
+    </div>
+    <!-- Ilustrasi dekoratif tomat & lab kimia transparan di pojok kanan banner -->
+    <div style="position: absolute; right: 15px; bottom: 0; opacity: 0.25; pointer-events: none; display: flex; align-items: flex-end; gap: 5px;">
+        <i class="fa-solid fa-flask" style="font-size: 3.5rem; color: #047857;"></i>
+        <i class="fa-solid fa-seedling" style="font-size: 2.5rem; color: #10b981;"></i>
+    </div>
+</div>
 
                 <div class="dashboard-grid">
                     <!-- Kolom Kiri -->
