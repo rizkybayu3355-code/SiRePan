@@ -46,6 +46,8 @@ body {
     padding: 15px 15px;
     flex-shrink: 0;
     transition: all 0.3s ease-in-out;
+    position: relative;
+    overflow: hidden;
 }
 
 .sidebar.sidebar-closed {
@@ -214,6 +216,23 @@ body {
     gap: 16px !important;
     border: 1px solid transparent !important;
     transition: all 0.3s ease !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ilustrasi dekoratif daun & lab transparan di pojok kanan banner */
+.alert-banner::after {
+    content: "";
+    position: absolute;
+    right: 15px;
+    bottom: 0;
+    width: 80px;
+    height: 80px;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" opacity="0.25"><path fill="%23047857" d="M90 60 C70 40, 80 20, 55 25 C45 30, 35 25, 35 35 C35 45, 25 50, 25 60 C25 70, 35 75, 45 75 C55 75, 65 80, 75 75 C85 70, 90 80, 90 60 Z"/><path fill="%2310b981" d="M20 40 C10 25, 25 10, 40 20 C45 25, 55 20, 50 30 C50 40, 60 45, 60 55 C60 65, 50 70, 40 70 C30 70, 20 65, 20 40 Z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    pointer-events: none;
 }
 
 .alert-banner.status-green {
@@ -761,6 +780,17 @@ body {
     overflow-y: auto;
 }
 
+/* Badge Netlify agar posisinya aman di bawah konten */
+.powered-by-netlify {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+    margin-bottom: 20px;
+    width: 100%;
+    z-index: 1;
+}
+
 /* --- RESPONSIVE MEDIA QUERIES UNTUK HP / LAYAR KECIL --- */
 @media (max-width: 768px) {
     .sidebar {
@@ -807,11 +837,6 @@ body {
 }
 
 /* Hiasan daun di bagian bawah sidebar */
-.sidebar {
-    position: relative;
-    overflow: hidden;
-}
-
 .sidebar::after {
     content: "";
     position: absolute;
