@@ -615,8 +615,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.restoreAnalysis = function(data) {
         renderAnalysisResult(data);
+        
+        // Cari dan aktifkan tab Analisis Makanan secara otomatis
+        const navLinks = document.querySelectorAll(".nav-link");
+        const tabContents = document.querySelectorAll(".tab-content");
+        const pageTitle = document.getElementById("pageTitle");
+
+        navLinks.forEach(l => l.classList.remove("active"));
+        tabContents.forEach(c => c.classList.add("hidden"));
+
         const analysisNavLink = document.querySelector("[data-tab='analysis-tab']");
-        if (analysisNavLink) analysisNavLink.click();
+        const analysisTabContent = document.getElementById("analysis-tab");
+
+        if (analysisNavLink) analysisNavLink.classList.add("active");
+        if (analysisTabContent) analysisTabContent.classList.remove("hidden");
+        if (pageTitle) pageTitle.innerText = "Analisis Makanan";
+
+        // Gulir halaman ke paling atas agar laporan langsung terlihat
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 });
