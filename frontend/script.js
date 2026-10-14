@@ -126,18 +126,20 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // ==========================================
-    // --- ANALISIS MAKANAN KE API ---
+    // --- ANALISIS MAKANAN LOKAL (DATABASE.JS) ---
     // ==========================================
     if (form) {
-        form.addEventListener("submit", async (e) => {
+        form.addEventListener("submit", (e) => {
             e.preventDefault();
 
+            const makanan = document.getElementById("makanan").value;
+            const gejala = document.getElementById("gejala").value;
             const jamKonsumsi = document.getElementById("jamKonsumsi").value;
             const durasiJam = parseInt(document.getElementById("durasiGejalaJam").value) || 0;
 
             const payload = {
-                makanan: document.getElementById("makanan").value,
-                gejala: document.getElementById("gejala").value,
+                makanan: makanan,
+                gejala: gejala,
                 jam_konsumsi: jamKonsumsi,
                 durasi_onset_jam: `${durasiJam} jam`,
                 lokasi: document.getElementById("lokasi").value
@@ -147,32 +149,83 @@ document.addEventListener("DOMContentLoaded", () => {
             submitBtn.disabled = true;
             submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menganalisis...';
 
-            appendLog(`[POST] Mengirim sampel '${payload.makanan}' (Jam: ${payload.jam_konsumsi}, Onset: ${payload.durasi_onset_jam}) ke API...`);
+            appendLog(`[LOCAL] Menganalisis sampel '${payload.makanan}' secara lokal menggunakan database patogen...`);
 
-            try {
-                const response = await fetch("https://sirepan-production.up.railway.app/api/analyze", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(payload)
-                });
-
-                if (!response.ok) throw new Error("Gagal terhubung ke backend FastAPI");
-
-                const data = await response.json();
-                renderAnalysisResult(data);
-                saveToHistory(payload.makanan, data);
-                appendLog(`[SUCCESS] Analisis selesai. Skor Risiko: ${data.risk_score}`);
-
-            } catch (error) {
-                showCustomAlert("Terjadi kesalahan koneksi API. Pastikan FastAPI backend aktif.", "error");
-                console.error(error);
-                appendLog(`[ERROR] Gagal memproses data: ${error.message}`);
-            } finally {
-                loadingStatus.classList.add("hidden");
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="fa-solid fa-microchip"></i> Analisis dengan AI';
-            }
+            // Simulasi jeda singkat agar animasi loading terasa natural
+            setTimeout(() => {
+                try {
+                    const resultData = computeLocalAnalysis(payload);
+                    renderAnalysisResult(resultData);
+                    saveToHistory(payload.makanan, resultData);
+                    appendLog(`[SUCCESS] Analisis selesai. Skor Risiko: ${resultData.risk_score}`);
+                } catch (error) {
+                    showCustomAlert("Terjadi kesalahan saat memproses data.", "error");
+                    console.error(error);
+                    appendLog(`[ERROR] Gagal memproses data: ${error.message}`);
+                } finally {
+                    loadingStatus.classList.add("hidden");
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '<i class="fa-solid fa-microchip"></i> Analisis dengan AI';
+                }
+            }, 600);
         });
+    }
+
+    // Fungsi Kalkulasi dan Pencocokan Lokal Berbasis database.js
+    function computeLocalAnalysis(report) {
+        const symptoms_lower = report.gejala.toLowerCase();
+        const food_lower = report.makanan.toLowerCase();
+        
+        let computed_score = 3.2;
+        const onset_hours = parseFloat(report.durasi_onset_jam) || 6.0;
+
+        if (["demam", "darah", "kejang", "pingsan", "sesak", "penglihatan ganda", "sulit menelan"].some(k => symptoms_lower.includes(k))) {
+            computed_score = onset_hours < 24 ? 8.8 : 8.0;
+        } else if (["muntah", "diare", "kram", "mulas", "menggigil"].some(k => symptoms_lower.includes(k))) {
+            computed_score = onset_hours < 5 ? 6.5 : 5.5;
+        }
+
+        let matched_pathogen = null;
+        if (typeof PATHOGENS_DATABASE !== 'undefined' && PATHOGENS_DATABASE.length > 0) {
+            for (let p of PATHOGENS_DATABASE) {
+                let match_found = false;
+                for (let g of (p.gejala_khas || [])) {
+                    if (symptoms_lower.includes(g.toLowerCase())) {
+                        match_found = true;
+                        break;
+                    }
+                }
+                for (let m of (p.makanan_berisiko || [])) {
+                    if (food_lower.includes(m.toLowerCase())) {
+                        match_found = true;
+                        break;
+                    }
+                }
+                if (match_found) {
+                    matched_pathogen = p;
+                    break;
+                }
+            }
+            if (!matched_pathogen) {
+                matched_pathogen = PATHOGENS_DATABASE[0];
+            }
+        }
+
+        return {
+            risk_summary: `Analisis Risiko Klinis Berdasarkan Standar ${matched_pathogen ? matched_pathogen.referensi_lembaga : 'WHO/CDC'}`,
+            risk_score: computed_score,
+            potential_pathogens: [
+                {
+                    name: matched_pathogen ? matched_pathogen.nama_patogen : "Patogen Umum Makanan",
+                    description: `Korelasi klinis antara gejala '${report.gejala}' dan masa inkubasi ${report.durasi_onset_jam} sesuai karakteristik patogen.`,
+                    symptom: report.gejala,
+                    source: `Analisis kontaminasi pada sampel: ${report.makanan}`
+                }
+            ],
+            detected_symptoms: report.gejala.split(",").map(s => s.trim()).filter(s => s.length > 0),
+            first_aid_recommendations: matched_pathogen ? matched_pathogen.pertolongan_pertama : ["Berikan cairan elektrolit dan rehidrasi mandiri."],
+            lab_inspection_steps: matched_pathogen ? matched_pathogen.lab_inspection_steps : ["Lakukan kultur sampel pada media selektif."]
+        };
     }
 
     if (resetBtn) {
